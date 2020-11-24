@@ -52,19 +52,24 @@ class PbGolangStructImplementationsSearch : QueryExecutorBase<GoSpecType, Search
         }
     }
 
-    private val lowerCamelRegex = "([a-z]+[A-Z]+\\w+)+".toRegex()
+    private val lowerCamelRegex = "[a-z]\\w+".toRegex()
     private val upperCamelRegex = "([A-Z]+[a-z]+\\w+)+".toRegex()
 
     private fun guessCaseFormat(s: String): CaseFormat? {
-        if (s.contains("_")) {
-            if (s.toUpperCase() == s) return CaseFormat.UPPER_UNDERSCORE
-            if (s.toLowerCase() == s) return CaseFormat.LOWER_UNDERSCORE
-        } else if (s.contains("-")) {
-            if (s.toLowerCase() == s) return CaseFormat.LOWER_HYPHEN
-        } else {
-            if (Character.isLowerCase(s[0])) {
+        when {
+            s.contains("_") -> {
+                when (s) {
+                    s.toUpperCase() -> return CaseFormat.UPPER_UNDERSCORE
+                    s.toLowerCase() -> return CaseFormat.LOWER_UNDERSCORE
+                }
+            }
+            s.contains("-") -> {
+                if (s.toLowerCase() == s) return CaseFormat.LOWER_HYPHEN
+            }
+            Character.isLowerCase(s[0]) -> {
                 if (s.matches(lowerCamelRegex)) return CaseFormat.LOWER_CAMEL
-            } else {
+            }
+            else -> {
                 if (s.matches(upperCamelRegex)) return CaseFormat.UPPER_CAMEL
             }
         }
