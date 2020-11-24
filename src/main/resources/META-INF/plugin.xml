@@ -1,19 +1,194 @@
 <idea-plugin>
-    <id>com.github.kkkiio.intellijprotobufsupport</id>
-    <name>intellij-protobuf-support</name>
+    <id>com.github.kkkiio.intellij.protobuf.support</id>
+    <name>IntellijProtobufSupport</name>
     <vendor>kkkiio</vendor>
 
     <!-- Product and plugin compatibility requirements -->
     <!-- https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lang</depends>
+    <!-- Requires the Go plugin -->
+    <depends>org.jetbrains.plugins.go</depends>
 
-    <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceImplementation="com.github.kkkiio.intellijprotobufsupport.services.MyApplicationService"/>
-        <projectService serviceImplementation="com.github.kkkiio.intellijprotobufsupport.services.MyProjectService"/>
+    <extensionPoints>
+        <extensionPoint qualifiedName="idea.plugin.protoeditor.fileResolveProvider"
+                        interface="idea.plugin.protoeditor.lang.resolve.FileResolveProvider"
+                        area="IDEA_PROJECT"
+                        dynamic="true"
+        />
+        <extensionPoint qualifiedName="idea.plugin.protoeditor.projectSettingsConfigurator"
+                        interface="idea.plugin.protoeditor.ide.settings.ProjectSettingsConfigurator"
+                        area="IDEA_PROJECT"
+                        dynamic="true"
+        />
+        <extensionPoint qualifiedName="idea.plugin.protoeditor.schemaProvider"
+                        interface="idea.plugin.protoeditor.lang.resolve.SchemaProvider"
+                        area="IDEA_PROJECT"
+                        dynamic="true"
+        />
+    </extensionPoints>
+
+    <extensions defaultExtensionNs="idea.plugin.protoeditor">
+        <!-- SettingsFileResolveProvider is listed first so that manually-configured descriptor paths always win. -->
+        <fileResolveProvider id="settings" order="FIRST"
+                             implementation="idea.plugin.protoeditor.ide.settings.SettingsFileResolveProvider"/>
+        <projectSettingsConfigurator id="default" order="LAST"
+                                     implementation="idea.plugin.protoeditor.ide.settings.DefaultConfigurator"/>
+
+        <!-- Schema definition -->
+        <schemaProvider implementation="idea.plugin.protoeditor.lang.resolve.directive.SchemaDirectiveSchemaProvider"/>
     </extensions>
 
-    <applicationListeners>
-        <listener class="com.github.kkkiio.intellijprotobufsupport.listeners.MyProjectManagerListener"
-                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
-    </applicationListeners>
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Language -->
+        <fileType name="protobuf" language="protobuf" implementationClass="idea.plugin.protoeditor.lang.PbFileType" extensions="proto"/>
+        <lang.parserDefinition language="protobuf" implementationClass="idea.plugin.protoeditor.lang.PbParserDefinition"/>
+
+        <!-- Syntax highlighting -->
+        <lang.syntaxHighlighterFactory language="protobuf" implementationClass="idea.plugin.protoeditor.ide.highlighter.PbSyntaxHighlighterFactory"/>
+        <annotator language="protobuf" implementationClass="idea.plugin.protoeditor.ide.highlighter.PbHighlightingAnnotator" order="FIRST"/>
+        <annotator language="protobuf" implementationClass="idea.plugin.protoeditor.ide.highlighter.PbTextHighlightingAnnotator" order="FIRST"/>
+        <colorSettingsPage implementation="idea.plugin.protoeditor.ide.highlighter.PbColorSettingsPage"/>
+
+        <!-- Error / warning annotations -->
+        <annotator language="protobuf" implementationClass="idea.plugin.protoeditor.lang.annotation.PbAnnotator"/>
+        <annotator language="protobuf" implementationClass="idea.plugin.protoeditor.lang.annotation.Proto2Annotator"/>
+        <annotator language="protobuf" implementationClass="idea.plugin.protoeditor.lang.annotation.Proto3Annotator"/>
+        <annotator language="protobuf" implementationClass="idea.plugin.protoeditor.lang.annotation.PbTextAnnotator"/>
+
+        <!-- Structure view -->
+        <lang.psiStructureViewFactory language="protobuf" implementationClass="idea.plugin.protoeditor.ide.views.PbStructureViewFactory"/>
+
+        <!-- Formatting and code style -->
+        <lang.formatter language="protobuf" implementationClass="idea.plugin.protoeditor.ide.formatter.PbFormattingModelBuilder"/>
+        <codeStyleSettingsProvider implementation="idea.plugin.protoeditor.ide.style.PbCodeStyleSettingsProvider"/>
+        <langCodeStyleSettingsProvider implementation="idea.plugin.protoeditor.ide.style.PbLanguageCodeStyleSettingsProvider"/>
+        <lineIndentProvider implementation="idea.plugin.protoeditor.ide.editing.PbLineIndentProvider" />
+
+        <!-- Editor sugar (folding, brace matching, completion, etc.) -->
+        <breadcrumbsInfoProvider implementation="idea.plugin.protoeditor.ide.views.PbBreadcrumbsInfoProvider" />
+        <typedHandler implementation="idea.plugin.protoeditor.ide.editing.ProtoTypedHandler"/>
+        <backspaceHandlerDelegate implementation="idea.plugin.protoeditor.ide.editing.ProtoBackspaceHandler"/>
+        <completion.confidence language="protobuf" implementationClass="idea.plugin.protoeditor.lang.completion.PbCompletionConfidence" />
+        <completion.contributor language="protobuf" implementationClass="idea.plugin.protoeditor.lang.completion.PbCompletionContributor"/>
+        <enterBetweenBracesDelegate language="protobuf" implementationClass="idea.plugin.protoeditor.ide.editing.PbEnterBetweenBracesDelegate"/>
+        <lang.braceMatcher language="protobuf" implementationClass="idea.plugin.protoeditor.ide.editing.ProtoBraceMatcher"/>
+        <lang.foldingBuilder language="protobuf" implementationClass="idea.plugin.protoeditor.ide.folding.ProtoFoldingBuilder"/>
+        <quoteHandler fileType="protobuf" className="idea.plugin.protoeditor.ide.editing.ProtoQuoteHandler"/>
+        <spellchecker.support language="protobuf" implementationClass="idea.plugin.protoeditor.ide.spelling.PbSpellcheckingStrategy"/>
+        <lang.commenter language="protobuf"
+                        implementationClass="idea.plugin.protoeditor.ide.editing.PbCommenter"/>
+        <multiLangCommenter implementation="idea.plugin.protoeditor.ide.editing.ProtoCommentProvider"/>
+
+        <!-- Navigation -->
+        <lang.findUsagesProvider language="protobuf" implementationClass="idea.plugin.protoeditor.lang.findusages.PbFindUsagesProvider"/>
+        <elementDescriptionProvider implementation="idea.plugin.protoeditor.lang.findusages.PbElementDescriptionProvider"/>
+        <usageTypeProvider
+                implementation="idea.plugin.protoeditor.lang.findusages.PbUsageTypeProvider"/>
+        <gotoSymbolContributor
+                implementation="idea.plugin.protoeditor.lang.gotobyname.PbGotoSymbolContributor"/>
+
+        <!-- Documentation -->
+        <documentationProvider implementation="idea.plugin.protoeditor.ide.documentation.PbDocumentationProvider"/>
+
+        <!-- Stub indexing -->
+        <stubElementTypeHolder class="idea.plugin.protoeditor.lang.psi.PbTypes"/>
+        <stubIndex implementation="idea.plugin.protoeditor.lang.stub.index.QualifiedNameIndex"/>
+        <stubIndex implementation="idea.plugin.protoeditor.lang.stub.index.ShortNameIndex"/>
+
+        <!-- Settings -->
+        <projectConfigurable instance="idea.plugin.protoeditor.ide.settings.PbLanguageSettingsConfigurable" groupId="language">
+            <configurable instance="idea.plugin.protoeditor.ide.settings.PbTextLanguageSettingsConfigurable"/>
+        </projectConfigurable>
+        <projectService serviceImplementation="idea.plugin.protoeditor.ide.settings.PbProjectSettings"/>
+        <projectService serviceImplementation="idea.plugin.protoeditor.ide.settings.PbTextLanguageSettings"/>
+        <postStartupActivity
+                implementation="idea.plugin.protoeditor.ide.settings.ProjectSettingsConfiguratorManager$ProjectOpenedActivity"/>
+
+        <!-- Enable usage highlights for non-project targets -->
+        <useScopeEnlarger implementation="idea.plugin.protoeditor.lang.resolve.PbUseScopeEnlarger"/>
+
+        <!-- Live templates -->
+        <liveTemplateContext
+                implementation="idea.plugin.protoeditor.ide.template.PbLanguageContext"/>
+        <liveTemplateContext
+                implementation="idea.plugin.protoeditor.ide.template.PbLanguageContext$EnumBody"/>
+        <liveTemplateContext
+                implementation="idea.plugin.protoeditor.ide.template.PbLanguageContext$ExtendBody"/>
+        <liveTemplateContext
+                implementation="idea.plugin.protoeditor.ide.template.PbLanguageContext$MessageBody"/>
+        <liveTemplateContext
+                implementation="idea.plugin.protoeditor.ide.template.PbLanguageContext$OneofBody"/>
+        <liveTemplateContext
+                implementation="idea.plugin.protoeditor.ide.template.PbLanguageContext$ServiceBody"/>
+
+
+        <gotoDeclarationHandler implementation="com.github.kkkiio.intellij.protobuf.support.golang.PbGolangGotoDeclarationHandler" order="first"/>
+        <definitionsScopedSearch implementation="com.github.kkkiio.intellij.protobuf.support.golang.PbGolangStructImplementationsSearch"/>
+    </extensions>
+
+    <!-- Text format extensions -->
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Language -->
+        <fileType name="prototext" language="prototext" implementationClass="idea.plugin.protoeditor.lang.PbTextFileType" extensions="textproto;pb"/>
+
+        <lang.parserDefinition language="prototext" implementationClass="idea.plugin.protoeditor.lang.PbTextParserDefinition"/>
+        <filetype.stubBuilder filetype="prototext" implementationClass="idea.plugin.protoeditor.lang.stub.PbTextFileStubBuilder"/>
+
+        <!-- Syntax highlighting -->
+        <lang.syntaxHighlighterFactory language="prototext" implementationClass="idea.plugin.protoeditor.ide.highlighter.PbTextSyntaxHighlighterFactory"/>
+        <annotator language="prototext" implementationClass="idea.plugin.protoeditor.ide.highlighter.PbTextHighlightingAnnotator"/>
+        <colorSettingsPage implementation="idea.plugin.protoeditor.ide.highlighter.PbTextColorSettingsPage"/>
+
+        <!-- Error / warning annotations -->
+        <annotator language="prototext" implementationClass="idea.plugin.protoeditor.lang.annotation.PbTextAnnotator"/>
+
+        <!-- Formatting and code style -->
+        <lang.formatter language="prototext" implementationClass="idea.plugin.protoeditor.ide.formatter.PbTextFormattingModelBuilder"/>
+        <codeStyleSettingsProvider implementation="idea.plugin.protoeditor.ide.style.PbTextCodeStyleSettingsProvider"/>
+        <langCodeStyleSettingsProvider implementation="idea.plugin.protoeditor.ide.style.PbTextLanguageCodeStyleSettingsProvider"/>
+
+        <!-- Editor sugar (folding, brace matching, completion, etc.) -->
+        <enterHandlerDelegate implementation="idea.plugin.protoeditor.ide.editing.PbTextEnterBetweenBracesHandler"/>
+        <quoteHandler fileType="prototext" className="idea.plugin.protoeditor.ide.editing.ProtoQuoteHandler"/>
+        <lang.braceMatcher language="prototext" implementationClass="idea.plugin.protoeditor.ide.editing.ProtoBraceMatcher"/>
+        <lang.foldingBuilder language="prototext" implementationClass="idea.plugin.protoeditor.ide.folding.ProtoFoldingBuilder"/>
+        <spellchecker.support language="prototext" implementationClass="idea.plugin.protoeditor.ide.spelling.PbTextSpellcheckingStrategy"/>
+        <lang.commenter language="prototext" implementationClass="idea.plugin.protoeditor.ide.editing.PbTextCommenter"/>
+
+        <!-- Schema definition -->
+        <psi.referenceContributor language="prototext"
+                                  implementation="idea.plugin.protoeditor.lang.resolve.directive.SchemaDirectiveReferenceContributor"/>
+        <annotator language="prototext" implementationClass="idea.plugin.protoeditor.lang.resolve.directive.SchemaDirectiveAnnotator"/>
+        <daemon.changeLocalityDetector implementation="idea.plugin.protoeditor.lang.resolve.directive.SchemaDirectiveChangeLocalityDetector"/>
+        <completion.contributor language="prototext" implementationClass="idea.plugin.protoeditor.lang.resolve.directive.SchemaDirectiveCompletionContributor"/>
+        <editorNotificationProvider implementation="idea.plugin.protoeditor.ide.editing.MissingSchemaNotificationProvider"/>
+        <templateCompletionProcessor implementation="idea.plugin.protoeditor.ide.template.ChildEntryTemplateCompletionProcessor"/>
+        <templateCompletionProcessor implementation="idea.plugin.protoeditor.ide.template.SymbolTemplateCompletionProcessor"/>
+
+        <!-- Live templates -->
+        <liveTemplateContext
+                implementation="idea.plugin.protoeditor.ide.template.PbTextLanguageContext"/>
+    </extensions>
+
+<!--    <projectListeners>-->
+<!--        <listener-->
+<!--                class="idea.plugin.protoeditor.ide.settings.ProjectSettingsConfiguratorManager$ProjectRootsListener"-->
+<!--                topic="com.intellij.openapi.roots.ModuleRootListener"/>-->
+<!--    </projectListeners>-->
+
+    <actions>
+        <action
+                class="idea.plugin.protoeditor.ide.actions.InsertSchemaDirectiveAction"
+                id="prototext.InsertSchemaDirective"
+                text="Insert Schema Annotation"
+                description="Insert a reference to this file's root protobuf message, enabling completion, validation, and other features">
+            <add-to-group group-id="EditorPopupMenu"/>
+        </action>
+    </actions>
+
+<!--    <applicationListeners>-->
+<!--        <listener class="com.github.kkkiio.intellij.protobuf.support.listeners.MyProjectManagerListener"-->
+<!--                  topic="com.intellij.openapi.project.ProjectManagerListener"/>-->
+<!--    </applicationListeners>-->
 </idea-plugin>

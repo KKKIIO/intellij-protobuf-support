@@ -7,7 +7,7 @@ plugins {
     // Java support
     id("java")
     // Kotlin support
-    id("org.jetbrains.kotlin.jvm") version "1.4.10"
+    id("org.jetbrains.kotlin.jvm") version "1.3.70"
     // gradle-intellij-plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
     id("org.jetbrains.intellij") version "0.6.3"
     // gradle-changelog-plugin - read more: https://github.com/JetBrains/gradle-changelog-plugin
@@ -31,7 +31,6 @@ val pluginVerifierIdeVersions: String by project
 val platformType: String by project
 val platformVersion: String by project
 val platformPlugins: String by project
-val platformDownloadSources: String by project
 
 group = pluginGroup
 version = pluginVersion
@@ -51,7 +50,6 @@ intellij {
     pluginName = pluginName_
     version = platformVersion
     type = platformType
-    downloadSources = platformDownloadSources.toBoolean()
     updateSinceUntilBuild = true
 
     // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file.
@@ -70,6 +68,8 @@ detekt {
         txt.enabled = false
     }
 }
+
+sourceSets["main"].java.srcDirs("src/main/gen")
 
 tasks {
     // Set the compatibility versions to 1.8
@@ -115,9 +115,9 @@ tasks {
         )
     }
 
-    runPluginVerifier {
-        ideVersions(pluginVerifierIdeVersions)
-    }
+//    runPluginVerifier {
+//        ideVersions(pluginVerifierIdeVersions)
+//    }
 
     publishPlugin {
         dependsOn("patchChangelog")
@@ -126,5 +126,9 @@ tasks {
         // Specify pre-release label to publish the plugin in a custom Release Channel automatically. Read more:
         // https://jetbrains.org/intellij/sdk/docs/tutorials/build_system/deployment.html#specifying-a-release-channel
         channels(pluginVersion.split('-').getOrElse(1) { "default" }.split('.').first())
+    }
+
+    runIde {
+        jvmArgs= listOf("-Xmx2048m", "-Xms256m", "-ea")
     }
 }
