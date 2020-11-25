@@ -1,6 +1,6 @@
 <idea-plugin>
     <id>com.github.kkkiio.intellij.protobuf.support</id>
-    <name>IntellijProtobufSupport</name>
+    <name>Intellij Protobuf Support</name>
     <vendor>kkkiio</vendor>
 
     <!-- Product and plugin compatibility requirements -->

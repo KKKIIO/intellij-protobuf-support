@@ -5,7 +5,6 @@ import com.goide.psi.GoSpecType
 import com.goide.psi.GoStructType
 import com.goide.psi.GoTypeSpec
 import com.goide.stubs.index.GoTypesIndex
-import com.google.common.base.CaseFormat
 import com.intellij.openapi.application.QueryExecutorBase
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.search.GlobalSearchScope
@@ -33,16 +32,14 @@ class PbGolangStructImplementationsSearch : QueryExecutorBase<GoSpecType, Search
                 ?: return
         log.info("pbMessageDefinition={name=${pbMessageDefinition.name}, body=${pbMessageDefinition.body}}")
         val messageName = pbMessageDefinition.name ?: return
-
-
-        // todo: search with case-insensitive option
-        val key = guessCaseFormat(messageName)?.to(CaseFormat.UPPER_CAMEL, messageName)
-                ?: messageName
+        val key = protoGenSpec.goCamelCase(messageName)
         log.info("GoTypesIndex.process start, key=$key")
         GoTypesIndex.process(
                 key,
                 queryParameters.project,
-                GlobalSearchScope.projectScope(queryParameters.project), null) { typeSpec: GoTypeSpec ->
+                GlobalSearchScope.projectScope(queryParameters.project),
+                // todo: filter file by ${protoFilename}.pb.go
+                null) { typeSpec: GoTypeSpec ->
             val identifier = typeSpec.identifier
             val specType = typeSpec.specType
             log.info("index process start, typeSpec={name=${typeSpec.name}, isTypeAlias=${typeSpec.isTypeAlias}}, shouldGoDeeper=${typeSpec.shouldGoDeeper()}, identifier={text=${identifier.text}}, specType={type=${specType.type}, identifier=${specType.identifier}}")
@@ -50,29 +47,5 @@ class PbGolangStructImplementationsSearch : QueryExecutorBase<GoSpecType, Search
                 consumer.process(it)
             } ?: true
         }
-    }
-
-    private val lowerCamelRegex = "[a-z]\\w+".toRegex()
-    private val upperCamelRegex = "([A-Z]+[a-z]+\\w+)+".toRegex()
-
-    private fun guessCaseFormat(s: String): CaseFormat? {
-        when {
-            s.contains("_") -> {
-                when (s) {
-                    s.toUpperCase() -> return CaseFormat.UPPER_UNDERSCORE
-                    s.toLowerCase() -> return CaseFormat.LOWER_UNDERSCORE
-                }
-            }
-            s.contains("-") -> {
-                if (s.toLowerCase() == s) return CaseFormat.LOWER_HYPHEN
-            }
-            Character.isLowerCase(s[0]) -> {
-                if (s.matches(lowerCamelRegex)) return CaseFormat.LOWER_CAMEL
-            }
-            else -> {
-                if (s.matches(upperCamelRegex)) return CaseFormat.UPPER_CAMEL
-            }
-        }
-        return null
     }
 }
