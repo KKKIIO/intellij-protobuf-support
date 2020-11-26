@@ -12,6 +12,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.DefinitionsScopedSearch.SearchParameters
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.Processor
+import idea.plugin.protoeditor.lang.PbFileType
 import idea.plugin.protoeditor.lang.PbLanguage
 import idea.plugin.protoeditor.lang.psi.PbField
 import idea.plugin.protoeditor.lang.psi.PbMessageDefinition
@@ -29,19 +30,19 @@ class PbGolangStructImplementationsSearch : QueryExecutorBase<PsiElement, Search
     override fun processQuery(queryParameters: @NotNull SearchParameters,
                               consumer: @NotNull Processor<in PsiElement>) {
         // todo: figure out why processQuery called twice
-        log.info("processQuery start, queryParameters.element=${queryParameters.element}, consumer=$consumer")
+        log.debug("processQuery start, queryParameters.element=${queryParameters.element}, consumer=$consumer")
         val pbElem = queryParameters.element.takeIf { it.language.`is`(PbLanguage.INSTANCE) }
                 ?: return
         val (goStructTypeConsumer, pbMessageDefinition) = when (pbElem) {
             is PbField -> {
                 val pbMessageDefinition = pbElem.parentOfType<PbMessageDefinition>()
                 if (pbMessageDefinition == null) {
-                    log.info("pbElem.parentOfType<PbMessageDefinition>()=null, pbElem=$pbElem")
+                    log.debug("pbElem.parentOfType<PbMessageDefinition>()=null, pbElem=$pbElem")
                     return
                 }
                 val pbFieldName = pbElem.name
                 if (pbFieldName == null) {
-                    log.info("pbElem.name=null, pbElem=$pbElem")
+                    log.debug("pbElem.name=null, pbElem=$pbElem")
                     return
                 }
                 val goFieldName = protoGenSpec.goCamelCase(pbFieldName)
@@ -55,17 +56,18 @@ class PbGolangStructImplementationsSearch : QueryExecutorBase<PsiElement, Search
             else -> return
         }
 
-        log.info("pbMessageDefinition={name=${pbMessageDefinition.name}, body=${pbMessageDefinition.body}}")
+        log.debug("pbMessageDefinition={name=${pbMessageDefinition.name}, body=${pbMessageDefinition.body}}")
         val messageName = pbMessageDefinition.name ?: return
         val goStructName = protoGenSpec.goCamelCase(messageName)
         val filter = pbMessageDefinition.containingFile.name.let {
-            if (it.endsWith(".proto")) {
-                getGenPbGoFileFilter(queryParameters.project, it.dropLast(6))
+            val ext = "." + PbFileType.INSTANCE.defaultExtension
+            if (it.endsWith(ext)) {
+                getGenPbGoFileFilter(queryParameters.project, it.dropLast(ext.length))
             } else {
                 getAllPbGoFilesFilter(queryParameters.project)
             }
         }
-        log.info("GoTypesIndex.process start, name=$goStructName, filter=$filter")
+        log.debug("GoTypesIndex.process start, name=$goStructName, filter=$filter")
         GoTypesIndex.process(
                 goStructName,
                 queryParameters.project,
@@ -74,7 +76,7 @@ class PbGolangStructImplementationsSearch : QueryExecutorBase<PsiElement, Search
         ) { typeSpec: GoTypeSpec ->
             val identifier = typeSpec.identifier
             val specType = typeSpec.specType
-            log.info("index process start, typeSpec={name=${typeSpec.name}, isTypeAlias=${typeSpec.isTypeAlias}}, shouldGoDeeper=${typeSpec.shouldGoDeeper()}, identifier={text=${identifier.text}}, specType={type=${specType.type}, identifier=${specType.identifier}}")
+            log.debug("index process start, typeSpec={name=${typeSpec.name}, isTypeAlias=${typeSpec.isTypeAlias}, shouldGoDeeper=${typeSpec.shouldGoDeeper()}}, identifier={text=${identifier.text}}, specType={type=${specType.type}, identifier=${specType.identifier}}")
             (specType.type as? GoStructType)?.let { structType ->
                 goStructTypeConsumer(specType, structType)
             } ?: true

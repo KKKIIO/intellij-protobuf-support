@@ -50,14 +50,15 @@ fun getPbGoIdFilter(project: Project): Map<Int, String>? {
         val idToFnMap = future.get(ID_FILTER_CALCULATION_TIMEOUT_MS.toLong(), TimeUnit.MILLISECONDS)
         log.debug("IdFilter[$key]. Cache hit.")
         idToFnMap
-    } catch (e: Exception) {
-        when (e) {
-            is ExecutionException, is TimeoutException, is InterruptedException -> {
-                log.debug("IdFilter[$key]. Cache miss. Filter will be calculated later")
-                null
-            }
-            else -> throw e
-        }
+    } catch (e: ExecutionException) {
+        log.debug("IdFilter[$key]. Cache miss. Filter will be calculated later")
+        null
+    } catch (e: TimeoutException) {
+        log.debug("IdFilter[$key]. Cache miss. Filter will be calculated later")
+        null
+    } catch (e: InterruptedException) {
+        log.debug("IdFilter[$key]. Cache miss. Filter will be calculated later")
+        null
     }
 }
 
