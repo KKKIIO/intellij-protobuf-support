@@ -15,6 +15,7 @@
  */
 package idea.plugin.protoeditor.ide.formatter;
 
+import com.github.kkkiio.intellij.protobuf.support.proto.format.*;
 import com.intellij.formatting.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
@@ -36,20 +37,19 @@ public class PbFormattingModelBuilder implements FormattingModelBuilder {
   @Override
   public FormattingModel createModel(PsiElement element, CodeStyleSettings settings) {
     PsiFile file = element.getContainingFile();
+    CommonCodeStyleSettings protoSettings = settings.getCommonSettings(PbLanguage.INSTANCE);
     return new PsiBasedFormattingModel(
         file,
         new PbBlock(
             element.getNode(),
             Wrap.createWrap(WrapType.NONE, false),
             null,
-            createSpaceBuilder(settings)),
+            createSpaceBuilder(settings, protoSettings), null,protoSettings),
         FormattingDocumentModelImpl.createOn(file));
   }
 
-  private static SpacingBuilder createSpaceBuilder(CodeStyleSettings settings) {
-
-    CommonCodeStyleSettings protoSettings = settings.getCommonSettings(PbLanguage.INSTANCE);
-
+  private static SpacingBuilder createSpaceBuilder(CodeStyleSettings settings,
+                                                   CommonCodeStyleSettings protoSettings) {
     return new SpacingBuilder(settings, PbLanguage.INSTANCE)
         .withinPair(ProtoTokenTypes.LBRACE, ProtoTokenTypes.RBRACE)
         .spaceIf(protoSettings.SPACE_WITHIN_BRACES, false)

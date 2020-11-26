@@ -49,7 +49,7 @@ public class PbLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettin
     } else if (settingsType == SettingsType.BLANK_LINES_SETTINGS) {
       consumer.showStandardOptions("KEEP_BLANK_LINES_IN_CODE");
     } else if (settingsType == SettingsType.WRAPPING_AND_BRACES_SETTINGS) {
-      consumer.showStandardOptions("RIGHT_MARGIN", "KEEP_LINE_BREAKS");
+      consumer.showStandardOptions("RIGHT_MARGIN", "KEEP_LINE_BREAKS", "ALIGN_MULTILINE_ASSIGNMENT");
     }
   }
 

@@ -115,9 +115,9 @@ tasks {
         )
     }
 
-//    runPluginVerifier {
-//        ideVersions(pluginVerifierIdeVersions)
-//    }
+    runPluginVerifier {
+        ideVersions(pluginVerifierIdeVersions)
+    }
 
     publishPlugin {
         dependsOn("patchChangelog")
