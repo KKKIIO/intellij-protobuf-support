@@ -8,8 +8,6 @@ most code copy from https://github.com/jvolkman/intellij-protobuf-editor, uses G
 
 current goal is to add more features about golang
 
-## Template ToDo list
-
 <!-- Plugin description -->
 IntelliJ plugin for editing Google Protocol Buffers. Features include:
 
