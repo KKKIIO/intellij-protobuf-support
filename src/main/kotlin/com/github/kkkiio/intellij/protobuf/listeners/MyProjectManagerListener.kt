@@ -1,6 +1,6 @@
-package com.github.kkkiio.intellij.protobuf.support.listeners
+package com.github.kkkiio.intellij.protobuf.listeners
 
-import com.github.kkkiio.intellij.protobuf.support.services.MyProjectService
+import com.github.kkkiio.intellij.protobuf.services.MyProjectService
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManagerListener

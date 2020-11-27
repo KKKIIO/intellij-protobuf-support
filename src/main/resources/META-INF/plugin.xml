@@ -1,6 +1,6 @@
 <idea-plugin>
-    <id>com.github.kkkiio.intellij.protobuf.support</id>
-    <name>Intellij Protobuf Support</name>
+    <id>com.github.kkkiio.protobuf.support</id>
+    <name>Protobuf Support</name>
     <vendor>kkkiio</vendor>
 
     <!-- Product and plugin compatibility requirements -->
@@ -123,8 +123,8 @@
                 implementation="idea.plugin.protoeditor.ide.template.PbLanguageContext$ServiceBody"/>
 
 
-        <gotoDeclarationHandler implementation="com.github.kkkiio.intellij.protobuf.support.golang.PbGolangGotoDeclarationHandler" order="first"/>
-        <definitionsScopedSearch implementation="com.github.kkkiio.intellij.protobuf.support.golang.PbGolangStructImplementationsSearch"/>
+        <gotoDeclarationHandler implementation="com.github.kkkiio.intellij.protobuf.golang.PbGolangGotoDeclarationHandler" order="first"/>
+        <definitionsScopedSearch implementation="com.github.kkkiio.intellij.protobuf.golang.PbGolangStructImplementationsSearch"/>
     </extensions>
 
     <!-- Text format extensions -->

@@ -1,4 +1,4 @@
-package com.github.kkkiio.intellij.protobuf.support
+package com.github.kkkiio.intellij.protobuf
 
 import com.intellij.AbstractBundle
 import org.jetbrains.annotations.NonNls

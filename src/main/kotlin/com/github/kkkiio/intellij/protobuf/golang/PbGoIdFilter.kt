@@ -1,4 +1,4 @@
-package com.github.kkkiio.intellij.protobuf.support.golang
+package com.github.kkkiio.intellij.protobuf.golang
 
 import com.goide.GoFileType
 import com.intellij.openapi.diagnostic.Logger

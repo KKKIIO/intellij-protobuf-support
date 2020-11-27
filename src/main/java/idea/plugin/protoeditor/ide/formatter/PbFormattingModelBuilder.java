@@ -15,7 +15,7 @@
  */
 package idea.plugin.protoeditor.ide.formatter;
 
-import com.github.kkkiio.intellij.protobuf.support.proto.format.*;
+import com.github.kkkiio.intellij.protobuf.proto.format.*;
 import com.intellij.formatting.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
