@@ -7,3 +7,19 @@
 most code copy from https://github.com/jvolkman/intellij-protobuf-editor, uses Gradle instead Bazel, and migrates java code to kotlin
 
 current goal is to add more features about golang
+
+## Template ToDo list
+
+<!-- Plugin description -->
+IntelliJ plugin for editing Google Protocol Buffers. Features include:
+
+- Support for proto2 and proto3
+- Syntax highlighting
+- Code completion
+- Semantic analysis
+- References and navigation
+- Quick documentation
+- Editor enhancements (completion, brace matching, etc.)
+- Navigating between protobuf files and some other languages (Java, Go, Python)
+- Full support for text format, both standalone and in custom options
+<!-- Plugin description end -->
