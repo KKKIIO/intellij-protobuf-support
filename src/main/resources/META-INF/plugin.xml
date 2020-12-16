@@ -85,8 +85,8 @@
         <elementDescriptionProvider implementation="idea.plugin.protoeditor.lang.findusages.PbElementDescriptionProvider"/>
         <usageTypeProvider
                 implementation="idea.plugin.protoeditor.lang.findusages.PbUsageTypeProvider"/>
-        <gotoSymbolContributor
-                implementation="idea.plugin.protoeditor.lang.gotobyname.PbGotoSymbolContributor"/>
+        <gotoClassContributor implementation="com.github.kkkiio.intellij.protobuf.golang.PbGotoTypeContributor"/>
+<!--        <gotoSymbolContributor implementation="idea.plugin.protoeditor.lang.gotobyname.PbGotoSymbolContributor"/>-->
 
         <!-- Documentation -->
         <documentationProvider implementation="idea.plugin.protoeditor.ide.documentation.PbDocumentationProvider"/>

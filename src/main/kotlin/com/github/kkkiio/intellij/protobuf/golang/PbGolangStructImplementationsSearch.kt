@@ -45,7 +45,7 @@ class PbGolangStructImplementationsSearch : QueryExecutorBase<PsiElement, Search
                     log.debug("pbElem.name=null, pbElem=$pbElem")
                     return
                 }
-                val goFieldName = protoGenSpec.goCamelCase(pbFieldName)
+                val goFieldName = PbGoGenSpec.goCamelCase(pbFieldName)
                 ({ _: GoSpecType, structType: GoStructType ->
                     consumer.process(structType.fieldDefinitions.first { it.name == goFieldName })
                 }) to pbMessageDefinition
@@ -58,7 +58,7 @@ class PbGolangStructImplementationsSearch : QueryExecutorBase<PsiElement, Search
 
         log.debug("pbMessageDefinition={name=${pbMessageDefinition.name}, body=${pbMessageDefinition.body}}")
         val messageName = pbMessageDefinition.name ?: return
-        val goStructName = protoGenSpec.goCamelCase(messageName)
+        val goStructName = PbGoGenSpec.goCamelCase(messageName)
         val filter = pbMessageDefinition.containingFile.name.let {
             val ext = "." + PbFileType.INSTANCE.defaultExtension
             if (it.endsWith(ext)) {

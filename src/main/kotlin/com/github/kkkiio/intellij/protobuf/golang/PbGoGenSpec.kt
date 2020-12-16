@@ -1,6 +1,28 @@
 package com.github.kkkiio.intellij.protobuf.golang
 
-class ProtoGenSpec {
+import com.intellij.psi.util.QualifiedName
+
+object PbGoGenSpec {
+    fun enumValueName(messageGoName: String?,
+                      enumGoName: String,
+                      enumValueName: String): String {
+        // A top-level enum value's name is: EnumName_ValueName
+        // An enum value contained in a message is: MessageName_ValueName
+        //
+        // For historical reasons, enum value names are not camel-cased.
+        return (messageGoName ?: enumGoName) + "_" + enumValueName
+    }
+
+    /**
+     *  newGoIdent returns the Go identifier for a descriptor.
+     */
+    fun newGoIdent(pbSymbolName: QualifiedName,
+                   pbPackageName: QualifiedName): String {
+        require(pbSymbolName.matchesPrefix(pbPackageName))
+        return goCamelCase(pbSymbolName.removeHead(pbPackageName.componentCount)
+                .join("."))
+    }
+
     /**
      * goCamelCase camel-cases a protobuf name for use as a Go identifier.
      *
@@ -65,5 +87,3 @@ class ProtoGenSpec {
         return this in '0'..'9'
     }
 }
-
-val protoGenSpec = ProtoGenSpec()

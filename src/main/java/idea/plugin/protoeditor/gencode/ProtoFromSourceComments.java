@@ -16,6 +16,7 @@
 package idea.plugin.protoeditor.gencode;
 
 import com.google.common.collect.ImmutableList;
+import com.intellij.openapi.diagnostic.*;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -38,16 +39,20 @@ public final class ProtoFromSourceComments {
   );
 
   private static final Pattern SOURCE_PATTERN = Pattern.compile(".* source: (.*\\.proto)$");
+  private static final Logger log = Logger.getInstance(ProtoFromSourceComments.class);
 
   private ProtoFromSourceComments() {}
 
   @Nullable
   public static PbFile findProtoOfGeneratedCode(String commentPrefix, PsiFile file) {
+    log.debug(String.format("findProtoOfGeneratedCode start, commentPrefix=%s, file=%s", commentPrefix,file));
     String source = extractSourceFromFile(file);
     if (source == null) {
       return null;
     }
+    log.debug(String.format("source=%s", source));
     List<PbFile> pbFiles = PbFileResolver.findFilesForContext(source, file);
+    log.debug(String.format("pbFiles=%s", pbFiles));
     if (!pbFiles.isEmpty()) {
       return pbFiles.get(0);
     } else {

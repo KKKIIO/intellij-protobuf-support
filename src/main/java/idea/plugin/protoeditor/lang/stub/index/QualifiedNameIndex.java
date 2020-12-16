@@ -20,6 +20,7 @@ import com.intellij.psi.stubs.StubIndexKey;
 import idea.plugin.protoeditor.lang.psi.PbNamedElement;
 import org.jetbrains.annotations.NotNull;
 
+// only for type?
 public class QualifiedNameIndex extends StringStubIndexExtension<PbNamedElement> {
   public static final StubIndexKey<String, PbNamedElement> KEY =
       StubIndexKey.createIndexKey("protobuf.byQualifiedName");

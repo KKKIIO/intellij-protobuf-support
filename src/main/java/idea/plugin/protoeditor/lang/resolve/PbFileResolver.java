@@ -15,6 +15,7 @@
  */
 package idea.plugin.protoeditor.lang.resolve;
 
+import com.intellij.openapi.diagnostic.*;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
@@ -23,6 +24,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
+import idea.plugin.protoeditor.gencode.*;
 import idea.plugin.protoeditor.lang.psi.PbFile;
 import idea.plugin.protoeditor.lang.resolve.FileResolveProvider.ChildEntry;
 import org.jetbrains.annotations.NotNull;
@@ -32,10 +34,12 @@ import java.util.function.Function;
 
 /** A helper class for finding files given path names. */
 public class PbFileResolver {
+  private static final Logger log = Logger.getInstance(PbFileResolver.class);
 
   @NotNull
   public static List<PbFile> findFilesForContext(
       @NotNull String path, @NotNull PsiElement context) {
+    log.debug(String.format("findFilesForContext start, path=%s, context%s", path,context));
     Module module = ModuleUtilCore.findModuleForPsiElement(context);
     if (module != null) {
       return findFilesInModule(path, module);
@@ -46,7 +50,9 @@ public class PbFileResolver {
 
   @NotNull
   public static List<PbFile> findFilesInModule(@NotNull String path, @NotNull Module module) {
+    log.debug(String.format("findFilesInModule start, path=%s, module=%s", path,module));
     if (!isValidImportPath(path)) {
+      log.debug(String.format("isValidImportPath return false, path=%s", path));
       return Collections.emptyList();
     }
     return findFiles(module.getProject(), (provider) -> provider.findFile(path, module));
