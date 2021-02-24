@@ -73,6 +73,7 @@ public class PbLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettin
 
     commonSettings.SPACE_BEFORE_COLON = false;
     commonSettings.SPACE_AFTER_COLON = true;
+    commonSettings.ALIGN_MULTILINE_ASSIGNMENT = true;
 
     indentOptions.USE_TAB_CHARACTER = false;
     indentOptions.TAB_SIZE = 2;

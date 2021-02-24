@@ -30,7 +30,7 @@ class PbBlock internal constructor(node: ASTNode,
                                    private val spacingBuilder: SpacingBuilder,
                                    fieldsAlignment: Alignment?,
                                    private val protoSettings: CommonCodeStyleSettings) : AbstractBlock(node, wrap, alignment) {
-    private val fieldsAlignment: Alignment? = if (node.psi is PbMessageBody) Alignment.createAlignment(true) else fieldsAlignment
+    private val fieldsAlignment: Alignment? = if (node.psi is PbBlockBody) Alignment.createAlignment(true) else fieldsAlignment
     override fun buildChildren(): List<Block> {
         if (isLeaf) {
             return emptyList()
@@ -95,13 +95,14 @@ class PbBlock internal constructor(node: ASTNode,
         return myNode.firstChildNode == null
     }
 
-    public override fun getChildIndent(): Indent? {
-        val psi = myNode.psi
-        return if (psi is PbStatement) {
+    public override fun getChildIndent(): Indent? = when (myNode.psi) {
+        is PbStatement -> {
             Indent.getContinuationWithoutFirstIndent()
-        } else if (psi is ProtoBlockBody) {
+        }
+        is ProtoBlockBody -> {
             Indent.getNormalIndent()
-        } else {
+        }
+        else -> {
             Indent.getNoneIndent()
         }
     }
