@@ -115,12 +115,12 @@ class PbBlock internal constructor(node: ASTNode,
      * Find the deepest node with the same text range
      */
     private fun deepestLeaf(node: ASTNode): ASTNode {
-        var node = node
-        while (node.firstChildNode != null
-                && node.textRange == node.firstChildNode.textRange) {
-            node = node.firstChildNode
+        var n = node
+        while (n.firstChildNode != null
+                && n.textRange == n.firstChildNode.textRange) {
+            n = n.firstChildNode
         }
-        return node
+        return n
     }
 
 }
