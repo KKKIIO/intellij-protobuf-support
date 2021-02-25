@@ -131,6 +131,12 @@
             <category>Proto</category>
             <className>com.github.kkkiio.intellij.protobuf.proto.intentions.SequencingPbFieldNum</className>
         </intentionAction>
+
+        <intentionAction>
+            <bundleName>idea.plugin.protoeditor.resources.protobuf-ide</bundleName>
+            <category>Go</category>
+            <className>com.github.kkkiio.intellij.protobuf.golang.PbGoFillAllFieldsIntention</className>
+        </intentionAction>
     </extensions>
 
     <!-- Text format extensions -->
