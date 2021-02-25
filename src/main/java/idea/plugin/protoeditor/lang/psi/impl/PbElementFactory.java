@@ -353,7 +353,7 @@ public class PbElementFactory {
     }
   }
 
-  private PsiElement parseLight(IElementType type, CharSequence text) {
+  public PsiElement parseLight(IElementType type, CharSequence text) {
     PbParserDefinition parserDefinition = new PbParserDefinition();
     PsiBuilder builder =
         PsiBuilderFactory.getInstance()
