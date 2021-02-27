@@ -15,13 +15,9 @@ import idea.plugin.protoeditor.lang.psi.PbTypes
 import idea.plugin.protoeditor.lang.psi.ProtoLeafElement
 import idea.plugin.protoeditor.lang.psi.impl.PbElementFactory
 
-interface UserAcceptableHint {
-    fun getInformationHint(): String
-}
-
 class HintUserException(msg: String,
-                        private val hintMsg: String = msg) : RuntimeException(msg), UserAcceptableHint {
-    override fun getInformationHint(): String = hintMsg
+                        private val hintMsg: String = msg) : RuntimeException(msg) {
+    fun getInformationHint(): String = hintMsg
 }
 
 class SequencingPbFieldNum : PsiElementBaseIntentionAction() {
@@ -77,13 +73,9 @@ class SequencingPbFieldNum : PsiElementBaseIntentionAction() {
                     }.forEachIndexed { offset, action ->
                         action(offset)
                     }
-        } catch (e: Throwable) {
-            if (e is UserAcceptableHint) {
-                HintManager.getInstance()
-                        .showInformationHint(editor, e.getInformationHint())
-            } else {
-                throw e
-            }
+        } catch (e: HintUserException) {
+            HintManager.getInstance()
+                    .showInformationHint(editor, e.getInformationHint())
         }
     }
 }
