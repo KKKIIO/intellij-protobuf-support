@@ -1,5 +1,6 @@
 package com.github.kkkiio.intellij.protobuf.proto.intentions
 
+import com.intellij.codeInsight.hint.HintManager
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction
 import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.diagnostic.logger
@@ -13,6 +14,15 @@ import idea.plugin.protoeditor.lang.psi.PbField
 import idea.plugin.protoeditor.lang.psi.PbTypes
 import idea.plugin.protoeditor.lang.psi.ProtoLeafElement
 import idea.plugin.protoeditor.lang.psi.impl.PbElementFactory
+
+interface UserAcceptableHint {
+    fun getInformationHint(): String
+}
+
+class HintUserException(msg: String,
+                        private val hintMsg: String = msg) : RuntimeException(msg), UserAcceptableHint {
+    override fun getInformationHint(): String = hintMsg
+}
 
 class SequencingPbFieldNum : PsiElementBaseIntentionAction() {
     override fun getFamilyName(): String {
@@ -32,41 +42,48 @@ class SequencingPbFieldNum : PsiElementBaseIntentionAction() {
     }
 
     override fun invoke(project: Project,
-                        editor: Editor?,
+                        editor: Editor,
                         element: PsiElement) {
-        val startField = element.parentOfType<PbField>(withSelf = true)
-                ?: return
-        log.debug { "startField=${startField.text}" }
-        val prevField = PsiTreeUtil.getPrevSiblingOfType(startField, PbField::class.java)
-        val startNum = if (prevField != null) {
-            val prevNum = prevField.fieldNumber?.longValue
-                    ?: // todo: show message
-                    throw IllegalArgumentException("previous field missing number")
-            prevNum + 1
-        } else {
-            1
-        }
+        try {
+            val startField = element.parentOfType<PbField>(withSelf = true)
+                    ?: return
+            log.debug { "startField=${startField.text}" }
+            val prevField = PsiTreeUtil.getPrevSiblingOfType(startField, PbField::class.java)
+            val startNum = if (prevField != null) {
+                val prevNum = prevField.fieldNumber?.longValue
+                        ?: throw HintUserException("previous field missing number")
+                prevNum + 1
+            } else {
+                1
+            }
 
-        val factory = PbElementFactory.getInstance(startField.pbFile)
-        generateSequence<PsiElement>(startField) { it.nextSibling }.filterIsInstance<PbField>()
-                .mapTo(arrayListOf<(Int) -> Unit>()) {
-                    val fieldNumber = it.fieldNumber
-                    if (fieldNumber != null) {
-                        { offset ->
-                            fieldNumber.replace(factory.parseLight(PbTypes.NUMBER_VALUE, (startNum + offset).toString()))
+            val factory = PbElementFactory.getInstance(startField.pbFile)
+            generateSequence<PsiElement>(startField) { it.nextSibling }.filterIsInstance<PbField>()
+                    .mapTo(arrayListOf<(Int) -> Unit>()) {
+                        val fieldNumber = it.fieldNumber
+                        if (fieldNumber != null) {
+                            { offset ->
+                                fieldNumber.replace(factory.parseLight(PbTypes.NUMBER_VALUE, (startNum + offset).toString()))
+                            }
+                        } else {
+                            val eqSymbol = PsiTreeUtil.getNextSiblingOfType(it.nameIdentifier, ProtoLeafElement::class.java)
+                            if (eqSymbol == null || eqSymbol.text != "=") {
+                                throw HintUserException("can't find '=' in field='${it.text}'")
+                            }
+                            { offset ->
+                                it.addAfter(factory.parseLight(PbTypes.NUMBER_VALUE, (startNum + offset).toString()), eqSymbol)
+                            }
                         }
-                    } else {
-                        val eqSymbol = PsiTreeUtil.getNextSiblingOfType(it.nameIdentifier, ProtoLeafElement::class.java)
-                        if (eqSymbol == null || eqSymbol.text != "=") {
-                            // todo: show message
-                            throw IllegalArgumentException("can't find '=' in field={${it.text}}")
-                        }
-                        { offset ->
-                            it.addAfter(factory.parseLight(PbTypes.NUMBER_VALUE, (startNum + offset).toString()), eqSymbol)
-                        }
+                    }.forEachIndexed { offset, action ->
+                        action(offset)
                     }
-                }.forEachIndexed { offset, action ->
-                    action(offset)
-                }
+        } catch (e: Throwable) {
+            if (e is UserAcceptableHint) {
+                HintManager.getInstance()
+                        .showInformationHint(editor, e.getInformationHint())
+            } else {
+                throw e
+            }
+        }
     }
 }
