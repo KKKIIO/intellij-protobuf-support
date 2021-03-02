@@ -199,8 +199,4 @@
         </action>
     </actions>
 
-<!--    <applicationListeners>-->
-<!--        <listener class="com.github.kkkiio.intellij.protobuf.support.listeners.MyProjectManagerListener"-->
-<!--                  topic="com.intellij.openapi.project.ProjectManagerListener"/>-->
-<!--    </applicationListeners>-->
 </idea-plugin>

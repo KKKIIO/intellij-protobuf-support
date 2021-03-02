@@ -17,7 +17,5 @@ IntelliJ plugin for editing Google Protocol Buffers. Features include:
 - Semantic analysis
 - References and navigation
 - Quick documentation
-- Editor enhancements (completion, brace matching, etc.)
-- Navigating between protobuf files and some other languages (Java, Go, Python)
-- Full support for text format, both standalone and in custom options
+- Editor enhancements (completion, brace matching, sequencing fields number, etc.)
 <!-- Plugin description end -->
