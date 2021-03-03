@@ -1,0 +1,5 @@
+message Person {
+    optional string first_name = 1;
+    <spot>optional string last_name  = 1;</spot>
+    <spot>optional int32 age         = 2;</spot>
+}

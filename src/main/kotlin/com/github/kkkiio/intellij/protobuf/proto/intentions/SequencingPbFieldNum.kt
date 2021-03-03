@@ -1,7 +1,7 @@
 package com.github.kkkiio.intellij.protobuf.proto.intentions
 
 import com.intellij.codeInsight.hint.HintManager
-import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction
+import com.intellij.codeInsight.intention.BaseElementAtCaretIntentionAction
 import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.editor.Editor
@@ -20,7 +20,7 @@ class HintUserException(msg: String,
     fun getInformationHint(): String = hintMsg
 }
 
-class SequencingPbFieldNum : PsiElementBaseIntentionAction() {
+class SequencingPbFieldNum : BaseElementAtCaretIntentionAction() {
     override fun getFamilyName(): String {
         return "SequencingPbFieldNum"
     }
