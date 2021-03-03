@@ -1,7 +1,9 @@
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
 
-# intellij-protobuf-support Changelog
+# protobuf-support Changelog
 
-## [Unreleased]
+## [0.0.1]
+
 ### Added
-- Initial scaffold created from [IntelliJ Platform Plugin Template](https://github.com/JetBrains/intellij-platform-plugin-template)
+
+- Add sequencing-fields-number intention

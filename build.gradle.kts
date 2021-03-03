@@ -85,7 +85,7 @@ tasks {
         jvmTarget = "1.8"
     }
 
-    buildSearchableOptions{
+    buildSearchableOptions {
         enabled = false
     }
 

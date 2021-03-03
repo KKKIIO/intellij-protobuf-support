@@ -9,7 +9,7 @@ most code copy from https://github.com/jvolkman/intellij-protobuf-editor, uses G
 current goal is to add more features about golang
 
 <!-- Plugin description -->
-IntelliJ plugin for editing Google Protocol Buffers. Features include:
+IntelliJ-based IDEs plugin for editing Google Protocol Buffers. Features include:
 
 - Support for proto2 and proto3
 - Syntax highlighting
