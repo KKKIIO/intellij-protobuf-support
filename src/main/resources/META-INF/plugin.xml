@@ -60,7 +60,7 @@
         <lang.psiStructureViewFactory language="protobuf" implementationClass="idea.plugin.protoeditor.ide.views.PbStructureViewFactory"/>
 
         <!-- Formatting and code style -->
-        <lang.formatter language="protobuf" implementationClass="idea.plugin.protoeditor.ide.formatter.PbFormattingModelBuilder"/>
+        <lang.formatter language="protobuf" implementationClass="com.github.kkkiio.intellij.protobuf.proto.format.PbFormattingModelBuilder"/>
         <codeStyleSettingsProvider implementation="idea.plugin.protoeditor.ide.style.PbCodeStyleSettingsProvider"/>
         <langCodeStyleSettingsProvider implementation="idea.plugin.protoeditor.ide.style.PbLanguageCodeStyleSettingsProvider"/>
         <lineIndentProvider implementation="idea.plugin.protoeditor.ide.editing.PbLineIndentProvider" />
