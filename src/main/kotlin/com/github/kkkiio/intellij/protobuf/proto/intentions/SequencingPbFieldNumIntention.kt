@@ -16,20 +16,18 @@ import idea.plugin.protoeditor.lang.psi.ProtoLeafElement
 import idea.plugin.protoeditor.lang.psi.impl.PbElementFactory
 
 class HintUserException(msg: String,
-                        private val hintMsg: String = msg) : RuntimeException(msg) {
-    fun getInformationHint(): String = hintMsg
-}
+                        val hintMsg: String = msg) : RuntimeException(msg)
 
-class SequencingPbFieldNum : BaseElementAtCaretIntentionAction() {
+class SequencingPbFieldNumIntention : BaseElementAtCaretIntentionAction() {
     override fun getFamilyName(): String {
         return "SequencingPbFieldNum"
     }
 
     override fun getText(): String {
-        return "Sequencing fields number";
+        return "Sequencing fields number"
     }
 
-    private val log = logger<SequencingPbFieldNum>()
+    private val log = logger<SequencingPbFieldNumIntention>()
 
     override fun isAvailable(project: Project,
                              editor: Editor?,
@@ -75,7 +73,7 @@ class SequencingPbFieldNum : BaseElementAtCaretIntentionAction() {
                     }
         } catch (e: HintUserException) {
             HintManager.getInstance()
-                    .showInformationHint(editor, e.getInformationHint())
+                    .showInformationHint(editor, e.hintMsg)
         }
     }
 }

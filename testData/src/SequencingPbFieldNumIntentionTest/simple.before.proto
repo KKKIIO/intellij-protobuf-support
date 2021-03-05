@@ -1,0 +1,7 @@
+syntax = "proto2";
+
+message ExampleMessage {
+  required string id   = 1;
+  optional int32 count = <caret>;
+  optional string data = 2;
+}

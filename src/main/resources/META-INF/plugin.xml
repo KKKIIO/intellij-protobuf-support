@@ -129,7 +129,7 @@
         <intentionAction>
             <bundleName>idea.plugin.protoeditor.resources.protobuf-ide</bundleName>
             <category>Proto</category>
-            <className>com.github.kkkiio.intellij.protobuf.proto.intentions.SequencingPbFieldNum</className>
+            <className>com.github.kkkiio.intellij.protobuf.proto.intentions.SequencingPbFieldNumIntention</className>
         </intentionAction>
 
         <intentionAction>
