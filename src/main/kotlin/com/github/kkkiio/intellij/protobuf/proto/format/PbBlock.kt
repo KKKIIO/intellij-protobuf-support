@@ -23,14 +23,21 @@ import com.intellij.psi.formatter.common.AbstractBlock
 import idea.plugin.protoeditor.ide.formatter.PbTextBlock
 import idea.plugin.protoeditor.lang.psi.*
 
+
+class PbBlockAlign {
+    val fieldAlign: Alignment = Alignment.createAlignment(true)
+    val assignAlign: Alignment = Alignment.createAlignment(true)
+}
+
 /** A formatting block for protobuf elements.  */
 class PbBlock internal constructor(node: ASTNode,
                                    wrap: Wrap?,
                                    alignment: Alignment?,
                                    private val spacingBuilder: SpacingBuilder,
-                                   fieldsAlignment: Alignment?,
+                                   blockAlign: PbBlockAlign?,
                                    private val protoSettings: CommonCodeStyleSettings) : AbstractBlock(node, wrap, alignment) {
-    private val fieldsAlignment: Alignment? = if (node.psi is PbBlockBody) Alignment.createAlignment(true) else fieldsAlignment
+    private val blockAlign: PbBlockAlign? = if (node.psi is PbBlockBody) PbBlockAlign() else blockAlign
+
     override fun buildChildren(): List<Block> {
         if (isLeaf) {
             return emptyList()
@@ -40,11 +47,20 @@ class PbBlock internal constructor(node: ASTNode,
                 PbTextBlock(it, myWrap, myAlignment, spacingBuilder)
             } else {
                 val deepestLeafChild = deepestLeaf(it)
+                val alignment = when {
+                    protoSettings.ALIGN_GROUP_FIELD_DECLARATIONS && blockAlign != null && it is ProtoLeafElement -> when {
+                        deepestLeafChild.elementType === ProtoTokenTypes.IDENTIFIER_LITERAL ->
+                            blockAlign.fieldAlign
+                        deepestLeafChild.elementType === ProtoTokenTypes.ASSIGN -> blockAlign.assignAlign
+                        else -> myAlignment
+                    }
+                    else -> myAlignment
+                }
                 PbBlock(deepestLeafChild,
                         myWrap,
-                        if (protoSettings.ALIGN_MULTILINE_ASSIGNMENT && deepestLeafChild.elementType === ProtoTokenTypes.ASSIGN) fieldsAlignment else myAlignment,
+                        alignment,
                         spacingBuilder,
-                        fieldsAlignment,
+                        blockAlign,
                         protoSettings)
             }
         }

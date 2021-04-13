@@ -49,7 +49,7 @@ public class PbLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettin
     } else if (settingsType == SettingsType.BLANK_LINES_SETTINGS) {
       consumer.showStandardOptions("KEEP_BLANK_LINES_IN_CODE");
     } else if (settingsType == SettingsType.WRAPPING_AND_BRACES_SETTINGS) {
-      consumer.showStandardOptions("RIGHT_MARGIN", "KEEP_LINE_BREAKS", "ALIGN_MULTILINE_ASSIGNMENT");
+      consumer.showStandardOptions("RIGHT_MARGIN", "KEEP_LINE_BREAKS", "ALIGN_GROUP_FIELD_DECLARATIONS");
     }
   }
 
@@ -73,7 +73,7 @@ public class PbLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettin
 
     commonSettings.SPACE_BEFORE_COLON = false;
     commonSettings.SPACE_AFTER_COLON = true;
-    commonSettings.ALIGN_MULTILINE_ASSIGNMENT = true;
+    commonSettings.ALIGN_GROUP_FIELD_DECLARATIONS = true;
 
     indentOptions.USE_TAB_CHARACTER = false;
     indentOptions.TAB_SIZE = 2;

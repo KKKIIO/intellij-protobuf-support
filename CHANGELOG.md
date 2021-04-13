@@ -3,9 +3,12 @@
 # protobuf-support Changelog
 
 ## [Unreleased]
+
 ### Added
 
 ### Changed
+
+- Support align fields in message body (ALIGN_GROUP_FIELD_DECLARATIONS)
 
 ### Deprecated
 
@@ -14,6 +17,7 @@
 ### Fixed
 
 ### Security
+
 ## [0.0.2]
 
 ### Added
