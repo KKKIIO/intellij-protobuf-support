@@ -9,6 +9,14 @@ class ProtoFormatterTest : TestCaseBase() {
         doTest()
     }
 
+    fun testQualifiedName() {
+        doTest()
+    }
+
+    fun testRpc() {
+        doTest()
+    }
+
     private fun doTest(c: Char? = null) {
         val testName: String = getTestName(true)
         configureCaseFile("$testName.before.proto")

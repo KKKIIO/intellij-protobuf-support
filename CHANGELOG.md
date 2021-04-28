@@ -3,17 +3,11 @@
 # protobuf-support Changelog
 
 ## [Unreleased]
-### Added
-
-### Changed
-
-### Deprecated
-
-### Removed
 
 ### Fixed
 
-### Security
+- Fix format qualified name
+
 ## [0.0.3]
 
 ### Added

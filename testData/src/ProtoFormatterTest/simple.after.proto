@@ -1,6 +1,7 @@
 syntax = "proto2";
 
 message ExampleMessage {
-  required string id    = 1;
-  optional int32  count = 2;
+  required string id     = 1;
+  optional int32  count  = 2;
+  repeated double scores = 3;
 }
