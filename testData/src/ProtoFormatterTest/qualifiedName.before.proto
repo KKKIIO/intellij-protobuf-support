@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+message M1 {
+  string stringField1 = 1;
+  google.protobuf.Empty qualifiedField2 = 2;
+  int32 int32Field1 = 3;
+}

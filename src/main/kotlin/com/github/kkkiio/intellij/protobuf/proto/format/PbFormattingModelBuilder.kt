@@ -21,6 +21,7 @@ import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 import com.intellij.psi.formatter.FormattingDocumentModelImpl
 import com.intellij.psi.formatter.PsiBasedFormattingModel
+import com.intellij.psi.tree.TokenSet
 import idea.plugin.protoeditor.lang.PbLanguage
 import idea.plugin.protoeditor.lang.psi.ProtoTokenTypes
 
@@ -67,8 +68,7 @@ class PbFormattingModelBuilder : FormattingModelBuilder {
                         //            .spaceIf(protoSettings.SPACE_BEFORE_LEFT_BRACKET)
                         .around(ProtoTokenTypes.ASSIGN)
                         .spaceIf(protoSettings.SPACE_AROUND_ASSIGNMENT_OPERATORS)
-                        .around(ProtoTokenTypes.IDENTIFIER_LITERAL)
-                        .spaces(1)
+                        .after(TokenSet.create(ProtoTokenTypes.OPTIONAL,ProtoTokenTypes.REQUIRED,ProtoTokenTypes.REPEATED)).spaces(1)
                         .before(ProtoTokenTypes.SEMI)
                         .spaces(0)
     }

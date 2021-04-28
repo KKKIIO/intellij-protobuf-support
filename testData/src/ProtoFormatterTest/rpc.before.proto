@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package endpoints.examples.bookstore;
+
+import "google/protobuf/empty.proto";
+
+service Bookstore {
+  // Returns a list of all shelves in the bookstore.
+  rpc ListShelves(google.protobuf.Empty) returns (ListShelvesResponse) {}
+}
