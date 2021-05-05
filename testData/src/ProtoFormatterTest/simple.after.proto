@@ -1,7 +1,8 @@
 syntax = "proto2";
 
 message ExampleMessage {
-  required string id     = 1;
-  optional int32  count  = 2;
-  repeated double scores = 3;
+  required string    id         = 1;
+  optional int32     count      = 2;
+  repeated double    scores     = 3;
+  map<string, int32> namedEnums = 4;
 }

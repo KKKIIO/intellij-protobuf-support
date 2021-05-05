@@ -20,6 +20,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.TokenType
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 import com.intellij.psi.formatter.common.AbstractBlock
+import com.intellij.psi.tree.TokenSet
 import idea.plugin.protoeditor.ide.formatter.PbTextBlock
 import idea.plugin.protoeditor.lang.psi.*
 
@@ -42,6 +43,8 @@ private fun ASTNode.deepestLeaf(): ASTNode {
     return n
 }
 
+private val leafSet = TokenSet.create(PbTypes.SYMBOL_PATH, PbTypes.TYPE_NAME)
+
 class PbBlock internal constructor(node: ASTNode,
                                    wrap: Wrap?,
                                    alignment: Alignment?,
@@ -50,35 +53,37 @@ class PbBlock internal constructor(node: ASTNode,
                                    private val protoSettings: CommonCodeStyleSettings) : AbstractBlock(node, wrap, alignment) {
     private val blockAlign: PbBlockAlign? = if (node.psi is PbBlockBody) PbBlockAlign() else blockAlign
 
-    override fun isLeaf(): Boolean = myNode.firstChildNode == null || myNode.elementType === PbTypes.SYMBOL_PATH
+    override fun isLeaf(): Boolean = myNode.firstChildNode == null || leafSet.contains(myNode.elementType)
 
     override fun buildChildren(): List<Block> {
         if (isLeaf) {
             return emptyList()
         }
-        return node.getChildren(null).filterNot(ASTNode::isEmpty).map {
-            if (it.elementType is PbTextElementType) {
-                return@map PbTextBlock(it, myWrap, myAlignment, spacingBuilder)
-            }
-            val deepestLeafChild = it.deepestLeaf()
-            val alignment = when {
-                protoSettings.ALIGN_GROUP_FIELD_DECLARATIONS && node.psi is PbField && blockAlign != null -> when {
-                    // todo: better identify field name
-                    it.elementType === ProtoTokenTypes.IDENTIFIER_LITERAL ->
-                        blockAlign.fieldAlign
-                    deepestLeafChild.elementType === ProtoTokenTypes.ASSIGN -> blockAlign.assignAlign
-                    else -> myAlignment
-                }
-                else -> myAlignment
-            }
+        return node.getChildren(null)
+                .filterNot(ASTNode::isEmpty)
+                .map { childNode ->
+                    if (childNode.elementType is PbTextElementType) {
+                        return@map PbTextBlock(childNode, myWrap, myAlignment, spacingBuilder)
+                    }
+                    val childBlockNode = if (leafSet.contains(childNode.elementType)) childNode else childNode.deepestLeaf()
+                    val alignment = when {
+                        protoSettings.ALIGN_GROUP_FIELD_DECLARATIONS && node.psi is PbField && blockAlign != null -> when {
+                            // todo: better identify field name
+                            childBlockNode.elementType === ProtoTokenTypes.IDENTIFIER_LITERAL ->
+                                blockAlign.fieldAlign
+                            childBlockNode.elementType === ProtoTokenTypes.ASSIGN -> blockAlign.assignAlign
+                            else -> myAlignment
+                        }
+                        else -> myAlignment
+                    }
 
-            return@map PbBlock(deepestLeafChild,
-                    myWrap,
-                    alignment,
-                    spacingBuilder,
-                    blockAlign,
-                    protoSettings)
-        }
+                    return@map PbBlock(childBlockNode,
+                            myWrap,
+                            alignment,
+                            spacingBuilder,
+                            blockAlign,
+                            protoSettings)
+                }
     }
 
     override fun getSpacing(child1: Block?, child2: Block): Spacing? {
