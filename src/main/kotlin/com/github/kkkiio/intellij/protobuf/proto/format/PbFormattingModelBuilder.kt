@@ -42,34 +42,31 @@ class PbFormattingModelBuilder : FormattingModelBuilder {
                         protoSettings),
                 FormattingDocumentModelImpl.createOn(file))
     }
-
-    companion object {
-        private fun createSpaceBuilder(settings: CodeStyleSettings,
-                                       protoSettings: CommonCodeStyleSettings): SpacingBuilder =
-                SpacingBuilder(settings, PbLanguage.INSTANCE).withinPair(ProtoTokenTypes.LBRACE,
-                        ProtoTokenTypes.RBRACE)
-                        .spaceIf(protoSettings.SPACE_WITHIN_BRACES,
-                                false)
-                        .withinPair(ProtoTokenTypes.LBRACK,
-                                ProtoTokenTypes.RBRACK)
-                        .spaceIf(protoSettings.SPACE_WITHIN_BRACKETS,
-                                false)
-                        .withinPair(ProtoTokenTypes.LPAREN,
-                                ProtoTokenTypes.RPAREN)
-                        .spaceIf(protoSettings.SPACE_WITHIN_PARENTHESES,
-                                false)
-                        .before(ProtoTokenTypes.COMMA)
-                        .spaceIf(protoSettings.SPACE_BEFORE_COMMA)
-                        .after(ProtoTokenTypes.COMMA)
-                        .spaceIf(protoSettings.SPACE_AFTER_COMMA) // TODO(volkman): figure out how to add these settings.
-                        //        .before(PbTypes.LBRACE)
-                        //            .spaceIf(protoSettings.SPACE_BEFORE_LEFT_BRACE)
-                        //        .before(PbTypes.LBRACK)
-                        //            .spaceIf(protoSettings.SPACE_BEFORE_LEFT_BRACKET)
-                        .around(ProtoTokenTypes.ASSIGN)
-                        .spaceIf(protoSettings.SPACE_AROUND_ASSIGNMENT_OPERATORS)
-                        .after(TokenSet.create(ProtoTokenTypes.OPTIONAL,ProtoTokenTypes.REQUIRED,ProtoTokenTypes.REPEATED)).spaces(1)
-                        .before(ProtoTokenTypes.SEMI)
-                        .spaces(0)
-    }
 }
+
+private fun createSpaceBuilder(settings: CodeStyleSettings,
+                               protoSettings: CommonCodeStyleSettings): SpacingBuilder =
+        SpacingBuilder(settings, PbLanguage.INSTANCE).withinPair(ProtoTokenTypes.LBRACE,
+                ProtoTokenTypes.RBRACE)
+                .spaceIf(protoSettings.SPACE_WITHIN_BRACES,
+                        false)
+                .withinPair(ProtoTokenTypes.LBRACK,
+                        ProtoTokenTypes.RBRACK)
+                .spaceIf(protoSettings.SPACE_WITHIN_BRACKETS,
+                        false)
+                .withinPair(ProtoTokenTypes.LPAREN,
+                        ProtoTokenTypes.RPAREN)
+                .spaceIf(protoSettings.SPACE_WITHIN_PARENTHESES,
+                        false)
+                .before(ProtoTokenTypes.COMMA)
+                .spaceIf(protoSettings.SPACE_BEFORE_COMMA)
+                .after(ProtoTokenTypes.COMMA)
+                .spaceIf(protoSettings.SPACE_AFTER_COMMA)
+                .around(ProtoTokenTypes.ASSIGN)
+                .spaceIf(protoSettings.SPACE_AROUND_ASSIGNMENT_OPERATORS)
+                .after(TokenSet.create(ProtoTokenTypes.OPTIONAL, ProtoTokenTypes.REQUIRED, ProtoTokenTypes.REPEATED))
+                .spaces(1)
+                .before(ProtoTokenTypes.SEMI)
+                .spaces(0)
+                .withinPair(ProtoTokenTypes.LT, ProtoTokenTypes.GT)
+                .spaceIf(protoSettings.SPACE_WITHIN_BRACES, false)

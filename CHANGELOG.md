@@ -3,17 +3,11 @@
 # protobuf-support Changelog
 
 ## [Unreleased]
-### Added
-
-### Changed
-
-### Deprecated
-
-### Removed
 
 ### Fixed
 
-### Security
+- Fix unexpected space before typename
+
 ## [0.0.4]
 
 ### Fixed
