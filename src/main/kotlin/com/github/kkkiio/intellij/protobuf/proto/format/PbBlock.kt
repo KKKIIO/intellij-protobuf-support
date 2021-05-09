@@ -50,7 +50,7 @@ class PbBlock internal constructor(node: ASTNode,
                                    alignment: Alignment?,
                                    private val spacingBuilder: SpacingBuilder,
                                    blockAlign: PbBlockAlign?,
-                                   private val protoSettings: CommonCodeStyleSettings) : AbstractBlock(node, wrap, alignment) {
+                                   private val settings: CommonCodeStyleSettings) : AbstractBlock(node, wrap, alignment) {
     private val blockAlign: PbBlockAlign? = if (node.psi is PbBlockBody) PbBlockAlign() else blockAlign
 
     override fun isLeaf(): Boolean = myNode.firstChildNode == null || leafSet.contains(myNode.elementType)
@@ -67,9 +67,9 @@ class PbBlock internal constructor(node: ASTNode,
                     }
                     val childBlockNode = if (leafSet.contains(childNode.elementType)) childNode else childNode.deepestLeaf()
                     val alignment = when {
-                        protoSettings.ALIGN_GROUP_FIELD_DECLARATIONS && node.psi is PbField && blockAlign != null -> when {
+                        settings.ALIGN_GROUP_FIELD_DECLARATIONS && blockAlign != null -> when {
                             // todo: better identify field name
-                            childBlockNode.elementType === ProtoTokenTypes.IDENTIFIER_LITERAL ->
+                            node.psi is PbField && childBlockNode.elementType === ProtoTokenTypes.IDENTIFIER_LITERAL ->
                                 blockAlign.fieldAlign
                             childBlockNode.elementType === ProtoTokenTypes.ASSIGN -> blockAlign.assignAlign
                             else -> myAlignment
@@ -82,13 +82,13 @@ class PbBlock internal constructor(node: ASTNode,
                             alignment,
                             spacingBuilder,
                             blockAlign,
-                            protoSettings)
+                            settings)
                 }
     }
 
     override fun getSpacing(child1: Block?, child2: Block): Spacing? {
         return if (node.psi is PbField && (child2 as? ASTBlock)?.node?.elementType === ProtoTokenTypes.IDENTIFIER_LITERAL) {
-            Spacing.createSpacing(1, 1, 0, protoSettings.KEEP_LINE_BREAKS, protoSettings.KEEP_BLANK_LINES_IN_CODE)
+            Spacing.createSpacing(1, 1, 0, settings.KEEP_LINE_BREAKS, settings.KEEP_BLANK_LINES_IN_CODE)
         } else {
             spacingBuilder.getSpacing(this, child1, child2)
         }

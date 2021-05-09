@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Support align assignment in enum
+
 ### Fixed
 
 - Fix unexpected space before typename
