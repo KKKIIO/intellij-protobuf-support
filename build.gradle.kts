@@ -133,4 +133,19 @@ tasks {
     runIde {
         jvmArgs= listOf("-Xmx2048m", "-Xms256m", "-ea")
     }
+
+    register("updateIncludePbFiles") {
+        doLast {
+            for (file in listOf("any", "api", "descriptor", "duration", "empty", "field_mask", "source_context", "struct", "timestamp", "type", "wrappers")) {
+                uri("https://raw.githubusercontent.com/protocolbuffers/protobuf/master/src/google/protobuf/${file}.proto").toURL()
+                        .openStream()
+                        .use { remoteFile ->
+                            val res = File(projectDir, "src/main/resources/include/google/protobuf/${file}.proto")
+                            res.outputStream().use {
+                                remoteFile.copyTo(it)
+                            }
+                        }
+            }
+        }
+    }
 }
