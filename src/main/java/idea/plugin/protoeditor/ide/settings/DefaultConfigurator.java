@@ -15,17 +15,15 @@
  */
 package idea.plugin.protoeditor.ide.settings;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import idea.plugin.protoeditor.ide.settings.PbProjectSettings.ImportPathEntry;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.diagnostic.*;
+import com.intellij.openapi.project.*;
+import com.intellij.openapi.roots.*;
+import com.intellij.openapi.vfs.*;
+import idea.plugin.protoeditor.ide.settings.PbProjectSettings.*;
+import org.jetbrains.annotations.*;
 
-import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
+import java.net.*;
+import java.util.*;
 
 /**
  * A {@link ProjectSettingsConfigurator} that generates configuration based on project source roots.
@@ -33,42 +31,47 @@ import java.util.Collections;
  * <p>The descriptor is set to <code>google/protobuf/descriptor.proto</code>.
  */
 public class DefaultConfigurator implements ProjectSettingsConfigurator {
-  private static final String DESCRIPTOR = "google/protobuf/descriptor.proto";
+    private static final String DESCRIPTOR = "google/protobuf/descriptor.proto";
+    private static final Logger log = Logger.getInstance(DefaultConfigurator.class);
 
-  @Nullable
-  @Override
-  public PbProjectSettings configure(Project project, PbProjectSettings settings) {
-    settings.setDescriptorPath(DESCRIPTOR);
-    settings.getImportPathEntries().clear();
-    VirtualFile[] roots = ProjectRootManager.getInstance(project).getContentSourceRoots();
-    for (VirtualFile root : roots) {
-      settings.getImportPathEntries().add(new ImportPathEntry(root.getUrl(), ""));
+    @Nullable
+    @Override
+    public PbProjectSettings configure(Project project, PbProjectSettings settings) {
+        settings.setDescriptorPath(DESCRIPTOR);
+        settings.getImportPathEntries().clear();
+        VirtualFile[] roots = ProjectRootManager.getInstance(project).getContentSourceRoots();
+        for (VirtualFile root : roots) {
+            settings.getImportPathEntries().add(new ImportPathEntry(root.getUrl(), ""));
+        }
+        ImportPathEntry includeEntry = getBuiltInIncludeEntry();
+        if (includeEntry != null) {
+            settings.getImportPathEntries().add(includeEntry);
+        }
+        return settings;
     }
 
-    ImportPathEntry includeEntry = getBuiltInIncludeEntry();
-    if (includeEntry != null) {
-      settings.getImportPathEntries().add(includeEntry);
+    @NotNull
+    @Override
+    public Collection<String> getDescriptorPathSuggestions(Project project) {
+        return Collections.singletonList(DESCRIPTOR);
     }
 
-    return settings;
-  }
-
-  @NotNull
-  @Override
-  public Collection<String> getDescriptorPathSuggestions(Project project) {
-    return Collections.singletonList(DESCRIPTOR);
-  }
-
-  @Nullable
-  static ImportPathEntry getBuiltInIncludeEntry() {
-    URL descriptorUrl = DefaultConfigurator.class.getResource("/include/google/protobuf/descriptor.proto");
-    if (descriptorUrl == null) {
-      return null;
+    @Nullable
+    static ImportPathEntry getBuiltInIncludeEntry() {
+        URL descriptorUrl = DefaultConfigurator.class.getResource(
+                "/include/google/protobuf/descriptor.proto");
+        if (descriptorUrl == null) {
+            log.error("load descriptor.proto failed, descriptorUrl=null");
+            return null;
+        }
+        VirtualFile descriptorFile = VfsUtil.findFileByURL(descriptorUrl);
+        if (descriptorFile == null) {
+            log.error(String.format(
+                    "load descriptor.proto failed, descriptorFile=null, descriptorUrl=%s",
+                    descriptorUrl));
+            return null;
+        }
+        return new ImportPathEntry(descriptorFile.getParent().getParent().getParent().getUrl(),
+                null);
     }
-    VirtualFile descriptorFile = VfsUtil.findFileByURL(descriptorUrl);
-    if (descriptorFile == null) {
-      return null;
-    }
-    return new ImportPathEntry(descriptorFile.getParent().getParent().getParent().getUrl(), null);
-  }
 }
