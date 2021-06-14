@@ -1,5 +1,6 @@
 package com.github.kkkiio.intellij.protobuf.test
 
+import com.intellij.psi.PsiFile
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import java.io.File
 
@@ -7,9 +8,8 @@ abstract class TestCaseBase : BasePlatformTestCase() {
     override fun getTestDataPath(): String = "testData/src"
     private val caseFileDir = "${javaClass.simpleName}/"
 
-    protected fun configureCaseFile(filePath: String) {
+    protected fun configureCaseFile(filePath: String): PsiFile =
         myFixture.configureByFile(filePath.caseFileFullPath())
-    }
 
     protected fun checkResultByCaseFile(filePath: String,
                                         ignoreTrailingWhitespaces: Boolean = false) {

@@ -3,7 +3,10 @@
 # protobuf-support Changelog
 
 ## [Unreleased]
+
 ### Added
+
+- Add line marker for message and enum in .pb.go file
 
 ### Changed
 
@@ -14,6 +17,7 @@
 ### Fixed
 
 ### Security
+
 ## [0.0.5]
 
 ### Added

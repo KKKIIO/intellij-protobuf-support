@@ -10,6 +10,8 @@
             <category>Go</category>
             <className>com.github.kkkiio.intellij.protobuf.golang.PbGoFillAllFieldsIntention</className>
         </intentionAction>
+        <codeInsight.lineMarkerProvider language="go"
+                                        implementationClass="com.github.kkkiio.intellij.protobuf.golang.MessageLineMarkerProvider"/>
     </extensions>
 
 </idea-plugin>

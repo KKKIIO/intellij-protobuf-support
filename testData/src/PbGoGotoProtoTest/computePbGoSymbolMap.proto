@@ -1,0 +1,20 @@
+syntax = "proto2";
+
+package simple;
+
+message example_message {
+  required string id     = 1;
+  optional Status status = 2;
+  optional ptype  type   = 3;
+  optional string data   = 4;
+
+  enum Status {
+    INACTIVE = 0;
+    ACTIVE   = 1;
+  }
+
+  enum ptype {
+    P0 = 0;
+    P1 = 1;
+  }
+}
