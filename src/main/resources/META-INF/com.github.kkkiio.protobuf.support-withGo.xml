@@ -1,8 +1,5 @@
 <idea-plugin>
     <extensions defaultExtensionNs="com.intellij">
-        <gotoDeclarationHandler
-                implementation="com.github.kkkiio.intellij.protobuf.golang.PbGolangGotoDeclarationHandler"
-                order="first"/>
         <definitionsScopedSearch
                 implementation="com.github.kkkiio.intellij.protobuf.golang.PbGolangStructImplementationsSearch"/>
         <intentionAction>
