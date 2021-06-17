@@ -3,6 +3,18 @@
 # protobuf-support Changelog
 
 ## [Unreleased]
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+## [0.0.6]
 
 ### Added
 
