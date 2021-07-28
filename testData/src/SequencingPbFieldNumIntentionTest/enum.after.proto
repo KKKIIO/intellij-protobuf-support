@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+enum MissMiddle {
+  MISS_MIDDLE_CREATED    = 0;
+  MISS_MIDDLE_PROCESSING = 1;
+  MISS_MIDDLE_SUCCEED    = 2;
+  MISS_MIDDLE_FAILED     = 3;
+}
+
+enum MissStart {
+  MISS_START_CREATED    = 0;
+  MISS_START_PROCESSING = 1;
+  MISS_START_SUCCEED    = 2;
+  MISS_START_FAILED     = 3;
+}
