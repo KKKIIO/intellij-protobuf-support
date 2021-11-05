@@ -3,17 +3,11 @@
 # protobuf-support Changelog
 
 ## [Unreleased]
-### Added
-
-### Changed
-
-### Deprecated
-
-### Removed
 
 ### Fixed
 
-### Security
+- Allow `optional` label exists in proto3 to support explicit presence.
+
 ## [0.0.6]
 
 ### Added
