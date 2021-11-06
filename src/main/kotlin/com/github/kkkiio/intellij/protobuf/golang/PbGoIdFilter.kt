@@ -51,13 +51,13 @@ fun getPbGoIdFilter(project: Project): Map<Int, String>? {
         log.debug("IdFilter[$key]. Cache hit.")
         idToFnMap
     } catch (e: ExecutionException) {
-        log.debug("IdFilter[$key]. Cache miss. Filter will be calculated later")
+        log.debug("IdFilter[$key]. Cache miss. Filter will be calculated later", e)
         null
     } catch (e: TimeoutException) {
-        log.debug("IdFilter[$key]. Cache miss. Filter will be calculated later")
+        log.debug("IdFilter[$key]. Cache miss. Filter will be calculated later", e)
         null
     } catch (e: InterruptedException) {
-        log.debug("IdFilter[$key]. Cache miss. Filter will be calculated later")
+        log.debug("IdFilter[$key]. Cache miss. Filter will be calculated later", e)
         null
     }
 }
