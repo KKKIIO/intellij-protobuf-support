@@ -5,6 +5,8 @@
 ## [Unreleased]
 ### Added
 
+- Support sequencing enum values
+
 ### Changed
 
 ### Deprecated
